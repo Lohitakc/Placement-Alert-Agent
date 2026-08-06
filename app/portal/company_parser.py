@@ -1,5 +1,4 @@
 from playwright.async_api import Page
-import re
 
 class CompanyParser:
 

@@ -35,6 +35,11 @@ class Extractor:
 
             await more_button.click()
 
+            print(self.page.url)
+            print(await self.page.title())
+
+            input("Press Enter after checking the opened page...")
+
             parser = CompanyParser(self.page)
 
             full_details = await parser.parse()
