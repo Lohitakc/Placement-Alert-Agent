@@ -10,9 +10,11 @@ class CompanyParser:
         await self.page.wait_for_url("**/company-info")
 
         company_information = await self.extract_company_information()
+        attachments = await self.extract_attachments()
 
         return {
-            "company_information": company_information
+            "company_information": company_information,
+            "attachments": attachments,
         }
 
     async def extract_company_information(self):
@@ -82,3 +84,41 @@ class CompanyParser:
                 k += 1
 
         return info
+
+    async def extract_attachments(self):
+
+        attachments = []
+
+        card = self.page.locator(
+            "div.v-card:has-text('Company Attachments')"
+        )
+
+        rows = card.locator("tr")
+
+        row_count = await rows.count()
+
+        for i in range(row_count):
+
+            row = rows.nth(i)
+
+            cols = row.locator("td")
+
+            if await cols.count() != 2:
+                continue
+
+            file_name = (
+                await cols.nth(0).inner_text()
+            ).strip()
+
+            link = cols.nth(1).locator("a")
+
+            download_url = await link.get_attribute("href")
+
+            attachments.append(
+                {
+                    "file_name": file_name,
+                    "download_url": download_url,
+                }
+            )
+
+        return attachments

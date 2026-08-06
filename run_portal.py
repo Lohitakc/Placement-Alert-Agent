@@ -19,8 +19,11 @@ async def main():
 
     for company in companies:
 
-        for company in companies:
-            print(company["full_details"]["company_information"])
+        print("Company Information")
+        print(company["full_details"]["company_information"])
+
+        print("\nAttachments")
+        print(company["full_details"]["attachments"])
 
         print("-" * 80)
 
