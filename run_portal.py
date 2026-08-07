@@ -3,6 +3,7 @@ from rich import print
 from app.portal.portal import Portal
 from app.database.models import create_tables
 from app.orchestrator.company_orchestrator import CompanyOrchestrator
+from app.orchestrator.monitor import Monitor
 
 
 async def main():
@@ -11,34 +12,50 @@ async def main():
 
     orchestrator = CompanyOrchestrator()
 
-    portal = Portal()
+    monitor = Monitor(interval_minutes=60)
 
-    await portal.start()
+    try:
 
-    await portal.open_scheduled_companies()
+        while True:
 
-    companies = await portal.get_companies()
+            portal = Portal()
 
-    print()
+            try:
 
-    print(f"Found {len(companies)} companies\n")
+                await portal.start()
 
-    for company in companies:
+                await portal.open_scheduled_companies()
 
-        status = orchestrator.save_company(company)
+                companies = await portal.get_companies()
 
-        if status == "NEW":
-            print(f"🟢 NEW: {company['company_name']}")
+                print()
 
-        elif status == "UPDATED":
-            print(f"🟡 UPDATED: {company['company_name']}")
+                print(f"Found {len(companies)} companies\n")
 
-        else:
-            print(f"⚪ EXISTING: {company['company_name']}")
+                for company in companies:
 
-    print("-" * 80)
+                    status = orchestrator.save_company(company)
 
-    await portal.stop()
+                    if status == "NEW":
+                        print(f"🟢 NEW: {company['company_name']}")
+
+                    elif status == "UPDATED":
+                        print(f"🟡 UPDATED: {company['company_name']}")
+
+                    else:
+                        print(f"⚪ EXISTING: {company['company_name']}")
+
+                print("-" * 80)
+
+            finally:
+
+                await portal.stop()
+
+            await monitor.sleep()
+
+    except (KeyboardInterrupt, asyncio.CancelledError):
+
+        print("\nAgent stopped by user.")
 
 
 if __name__ == "__main__":
