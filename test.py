@@ -1,24 +1,25 @@
-from app.database.models import create_tables
 from app.database.repository import CompanyRepository
-
-create_tables()
 
 repo = CompanyRepository()
 
-company = {
-    "company_code": "TEST001",
-    "company": "Test Company",
-    "company_type": "Placement",
-    "min_package": "10",
-    "max_package": "20",
+company = repo.get_company("COZ2026-271")
+
+print("Before:")
+print(company)
+
+updated_company = {
+    "company_code": "COZ2026-271",
+    "company": "Cognizant",
+    "company_type": "Regular",
+    "min_package": "12",          # <-- Temporary change
+    "max_package": "18",         # <-- Temporary change
     "offering": "Placement",
     "dead_backlog": "Allowed",
     "live_backlog": "Not Allowed",
     "year_down": "Allowed",
 }
 
-print(repo.company_exists("TEST001"))
+repo.update_company(updated_company)
 
-repo.insert_company(company)
-
-print(repo.company_exists("TEST001"))
+print("\nAfter:")
+print(repo.get_company("COZ2026-271"))

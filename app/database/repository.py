@@ -24,6 +24,30 @@ class CompanyRepository:
 
         return exists
 
+    def get_company(self, company_code: str):
+
+        connection = get_connection()
+
+        cursor = connection.cursor()
+
+        cursor.execute(
+            """
+            SELECT *
+            FROM companies
+            WHERE company_code = ?
+            """,
+            (company_code,)
+        )
+
+        row = cursor.fetchone()
+
+        connection.close()
+
+        if row is None:
+            return None
+
+        return dict(row)
+
 
     def insert_company(self, company: dict):
 
@@ -57,6 +81,44 @@ class CompanyRepository:
                 company["dead_backlog"],
                 company["live_backlog"],
                 company["year_down"],
+            )
+        )
+
+        connection.commit()
+        
+        connection.close()
+
+    def update_company(self, company: dict):
+
+        connection = get_connection()
+
+        cursor = connection.cursor()
+
+        cursor.execute(
+            """
+            UPDATE companies
+            SET
+                company_name = ?,
+                company_type = ?,
+                min_package = ?,
+                max_package = ?,
+                offering = ?,
+                dead_backlog = ?,
+                live_backlog = ?,
+                year_down = ?,
+                last_seen = CURRENT_TIMESTAMP
+            WHERE company_code = ?
+            """,
+            (
+                company["company"],
+                company["company_type"],
+                company["min_package"],
+                company["max_package"],
+                company["offering"],
+                company["dead_backlog"],
+                company["live_backlog"],
+                company["year_down"],
+                company["company_code"],
             )
         )
 

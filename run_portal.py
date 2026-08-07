@@ -25,16 +25,16 @@ async def main():
 
     for company in companies:
 
-        print(f"Processing: {company['company_name']}")
+        status = orchestrator.save_company(company)
 
-        is_new = orchestrator.save_company(company)
-
-        print("save_company() returned:", is_new)
-
-        if is_new:
+        if status == "NEW":
             print(f"🟢 NEW: {company['company_name']}")
+
+        elif status == "UPDATED":
+            print(f"🟡 UPDATED: {company['company_name']}")
+
         else:
-            print(f"⚪ Existing: {company['company_name']}")
+            print(f"⚪ EXISTING: {company['company_name']}")
 
     print("-" * 80)
 
