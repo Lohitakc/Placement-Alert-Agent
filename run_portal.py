@@ -1,9 +1,15 @@
 import asyncio
 from rich import print
 from app.portal.portal import Portal
+from app.database.models import create_tables
+from app.orchestrator.company_orchestrator import CompanyOrchestrator
 
 
 async def main():
+
+    create_tables()
+
+    orchestrator = CompanyOrchestrator()
 
     portal = Portal()
 
@@ -19,15 +25,18 @@ async def main():
 
     for company in companies:
 
-        print("Company Information")
-        print(company["full_details"]["company_information"])
+        print(f"Processing: {company['company_name']}")
 
-        print("\nAttachments")
-        print(company["full_details"]["attachments"])
+        is_new = orchestrator.save_company(company)
 
-        print("-" * 80)
+        print("save_company() returned:", is_new)
 
-    input()
+        if is_new:
+            print(f"🟢 NEW: {company['company_name']}")
+        else:
+            print(f"⚪ Existing: {company['company_name']}")
+
+    print("-" * 80)
 
     await portal.stop()
 
