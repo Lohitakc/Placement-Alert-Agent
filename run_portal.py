@@ -4,6 +4,7 @@ from app.portal.portal import Portal
 from app.database.models import create_tables
 from app.orchestrator.company_orchestrator import CompanyOrchestrator
 from app.orchestrator.monitor import Monitor
+from app.notifications.notifier import Notifier
 
 
 async def main():
@@ -11,6 +12,7 @@ async def main():
     create_tables()
 
     orchestrator = CompanyOrchestrator()
+    notifier = Notifier()
 
     monitor = Monitor(interval_minutes=60)
 
@@ -37,12 +39,25 @@ async def main():
                     status = orchestrator.save_company(company)
 
                     if status == "NEW":
+
                         print(f"🟢 NEW: {company['company_name']}")
 
+                        notifier.send(
+                            "🟢 New Company",
+                            company["company_name"]
+                        )
+
                     elif status == "UPDATED":
+
                         print(f"🟡 UPDATED: {company['company_name']}")
 
+                        notifier.send(
+                            "🟡 Company Updated",
+                            company["company_name"]
+                        )
+
                     else:
+
                         print(f"⚪ EXISTING: {company['company_name']}")
 
                 print("-" * 80)
