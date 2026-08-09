@@ -14,7 +14,7 @@ async def main():
     orchestrator = CompanyOrchestrator()
     notifier = Notifier()
 
-    monitor = Monitor(interval_minutes=60)
+    monitor = Monitor(interval_minutes=1)
 
     try:
 
@@ -36,7 +36,12 @@ async def main():
 
                 for company in companies:
 
-                    status = orchestrator.save_company(company)
+                    info = company["full_details"]["company_information"]
+
+                    result = orchestrator.save_company(company)
+
+                    status = result["status"]
+                    changes = result["changes"]
 
                     if status == "NEW":
 
@@ -44,16 +49,32 @@ async def main():
 
                         notifier.send(
                             "🟢 New Company",
-                            company["company_name"]
+                            f"{company['company_name']}\n"
+                            f"Package: {info['min_package']} - {info['max_package']} LPA"
                         )
 
                     elif status == "UPDATED":
 
                         print(f"🟡 UPDATED: {company['company_name']}")
 
+                        change_lines = []
+
+                        for field, change in changes.items():
+
+                            field_name = field.replace("_", " ").title()
+
+                            change_lines.append(
+                                f"{field_name}: {change['old']} → {change['new']}"
+                            )
+
+                        message = (
+                            f"{company['company_name']}\n\n"
+                            + "\n".join(change_lines)
+                        )
+
                         notifier.send(
                             "🟡 Company Updated",
-                            company["company_name"]
+                            message
                         )
 
                     else:

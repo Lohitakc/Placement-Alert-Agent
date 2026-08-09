@@ -31,14 +31,15 @@ class Extractor:
 
             more_button = card.get_by_role("button", name="More")
 
-            print(f"Opening {company_name}...")
+            async with self.page.expect_response(
+                lambda r: "CompanyofferingInfo" in r.url and r.status == 200
+            ) as info_resp, self.page.expect_response(
+                lambda r: "getCompanyOfferingForFileAttachment" in r.url and r.status == 200
+            ) as attach_resp:
+                await more_button.click()
 
-            await more_button.click()
-
-            print(self.page.url)
-            print(await self.page.title())
-
-            input("Press Enter after checking the opened page...")
+            await info_resp.value
+            await attach_resp.value
 
             parser = CompanyParser(self.page)
 

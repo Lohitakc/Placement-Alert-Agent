@@ -9,6 +9,11 @@ class CompanyParser:
 
         await self.page.wait_for_url("**/company-info")
 
+        card = self.page.locator(
+            "div.v-card:has-text('Company Information And Criteria')"
+        )
+        await card.wait_for(state="visible")
+
         company_information = await self.extract_company_information()
         attachments = await self.extract_attachments()
 
@@ -28,6 +33,11 @@ class CompanyParser:
         rows = card.locator("div.row")
 
         row_count = await rows.count()
+
+        if row_count == 0:
+            raise RuntimeError(
+                "Company Information card has 0 rows — data likely not loaded yet"
+            )
 
         for i in range(row_count):
 

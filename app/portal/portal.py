@@ -4,6 +4,7 @@ from app.portal.extractor import Extractor
 from app.portal.login import LoginManager
 from app.portal.session import SessionManager
 from app.shared.config import HEADLESS, LOGIN_URL
+from playwright.async_api import TimeoutError as PlaywrightTimeoutError
 
 
 class Portal:
@@ -35,13 +36,22 @@ class Portal:
 
             self.context = await self.browser.new_context()
 
+        
+
         self.page = await self.context.new_page()
         self.navigator = Navigator(self.page)
         self.extractor = Extractor(self.page)
-        await self.page.goto(LOGIN_URL)
+        await self.page.goto(LOGIN_URL, wait_until="domcontentloaded", timeout=60000)
 
-        if await self.page.locator("button:has-text('LOGIN')").count() > 0:
+        try:
+            await self.page.wait_for_selector(
+                "button:has-text('LOGIN')", timeout=10000
+            )
+            needs_login = True
+        except PlaywrightTimeoutError:
+            needs_login = False
 
+        if needs_login:
             await self.login_manager.login(self.page)
             await self.session.save(self.context)
 

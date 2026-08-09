@@ -17,9 +17,13 @@ class CompanyOrchestrator:
 
             self.repository.insert_company(company_info)
 
-            return "NEW"
+            return {
+                "status": "NEW",
+                "changes": {},
+            }
 
         stored = self.repository.get_company(company_code)
+        changes = {}
 
         tracked_fields = [
             "company_name",
@@ -32,6 +36,8 @@ class CompanyOrchestrator:
             "year_down",
         ]
 
+        changes = {}
+
         for field in tracked_fields:
 
             current_value = (
@@ -40,10 +46,23 @@ class CompanyOrchestrator:
                 else company_info[field]
             )
 
-            if stored[field] != current_value:
+            old_value = stored[field]
+
+            if old_value != current_value:
+
+                changes[field] = {
+                    "old": old_value,
+                    "new": current_value,
+                }
 
                 self.repository.update_company(company_info)
 
-                return "UPDATED"
+                return {
+                    "status": "UPDATED",
+                    "changes": changes,
+                }
 
-        return "EXISTING"
+        return {
+            "status": "EXISTING",
+            "changes": {},
+        }

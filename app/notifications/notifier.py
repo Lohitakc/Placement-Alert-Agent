@@ -9,5 +9,5 @@ class Notifier:
             title=title,
             message=message,
             app_name="Placement Agent",
-            timeout=10,
+            timeout=60,
         )

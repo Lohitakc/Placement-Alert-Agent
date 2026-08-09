@@ -11,8 +11,8 @@ updated_company = {
     "company_code": "COZ2026-271",
     "company": "Cognizant",
     "company_type": "Regular",
-    "min_package": "99",          # <-- Temporary change
-    "max_package": "99",         # <-- Temporary change
+    "min_package": "12",          # <-- Temporary change
+    "max_package": "15",         # <-- Temporary change
     "offering": "Placement",
     "dead_backlog": "Allowed",
     "live_backlog": "Not Allowed",
