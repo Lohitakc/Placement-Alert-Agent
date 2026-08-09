@@ -7,6 +7,7 @@ def create_tables():
 
     cursor = connection.cursor()
 
+    # TPO companies
     cursor.execute(
         """
         CREATE TABLE IF NOT EXISTS companies (
@@ -34,6 +35,34 @@ def create_tables():
             first_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
             last_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        """
+    )
+
+    # Relevant Telegram messages
+    cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS telegram_messages (
+
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            telegram_message_id INTEGER NOT NULL,
+
+            chat_id INTEGER NOT NULL,
+
+            message_text TEXT NOT NULL,
+
+            message_date TIMESTAMP,
+
+            company_detected INTEGER DEFAULT 0,
+
+            name_mentioned INTEGER DEFAULT 0,
+
+            shortlist_detected INTEGER DEFAULT 0,
+
+            first_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+            UNIQUE(chat_id, telegram_message_id)
         )
         """
     )

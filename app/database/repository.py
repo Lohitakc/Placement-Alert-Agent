@@ -125,3 +125,69 @@ class CompanyRepository:
         connection.commit()
 
         connection.close()
+
+class TelegramRepository:
+
+    def message_exists(
+        self,
+        chat_id: int,
+        telegram_message_id: int
+    ) -> bool:
+
+        connection = get_connection()
+
+        cursor = connection.cursor()
+
+        cursor.execute(
+            """
+            SELECT 1
+            FROM telegram_messages
+            WHERE chat_id = ?
+            AND telegram_message_id = ?
+            """,
+            (
+                chat_id,
+                telegram_message_id
+            )
+        )
+
+        exists = cursor.fetchone() is not None
+
+        connection.close()
+
+        return exists
+
+    def insert_message(self, message: dict):
+
+        connection = get_connection()
+
+        cursor = connection.cursor()
+
+        cursor.execute(
+            """
+            INSERT INTO telegram_messages
+            (
+                telegram_message_id,
+                chat_id,
+                message_text,
+                message_date,
+                company_detected,
+                name_mentioned,
+                shortlist_detected
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                message["telegram_message_id"],
+                message["chat_id"],
+                message["message_text"],
+                message["message_date"],
+                message["company_detected"],
+                message["name_mentioned"],
+                message["shortlist_detected"],
+            )
+        )
+
+        connection.commit()
+
+        connection.close()
