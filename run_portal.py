@@ -45,17 +45,17 @@ async def main():
 
                     if status == "NEW":
 
-                        print(f"🟢 NEW: {company['company_name']}")
+                        print(f"🟢 TPO - NEW: {company['company_name']}")
 
                         notifier.send(
-                            "🟢 New Company",
+                            "🟢 TPO - New Company",
                             f"{company['company_name']}\n"
                             f"Package: {info['min_package']} - {info['max_package']} LPA"
                         )
 
                     elif status == "UPDATED":
 
-                        print(f"🟡 UPDATED: {company['company_name']}")
+                        print(f"🟡 TPO - UPDATED: {company['company_name']}")
 
                         change_lines = []
 
@@ -73,13 +73,13 @@ async def main():
                         )
 
                         notifier.send(
-                            "🟡 Company Updated",
+                            "🟡 TPO - Company Updated",
                             message
                         )
 
                     else:
 
-                        print(f"⚪ EXISTING: {company['company_name']}")
+                        print(f"⚪ TPO - EXISTING: {company['company_name']}")
 
                 print("-" * 80)
 

@@ -60,9 +60,9 @@ class TelegramMonitor:
             text = message.text
             text_lower = text.lower()
 
-            # -----------------------------
+             
             # Name detection
-            # -----------------------------
+             
 
             name_matches = [
                 name
@@ -70,9 +70,9 @@ class TelegramMonitor:
                 if name in text_lower
             ]
 
-            # -----------------------------
+             
             # Shortlist detection
-            # -----------------------------
+             
 
             shortlist_matches = [
                 keyword
@@ -80,15 +80,15 @@ class TelegramMonitor:
                 if keyword in text_lower
             ]
 
-            # -----------------------------
+             
             # Company detection
-            # -----------------------------
+             
 
             company_matches = self.find_company_matches(text_lower)
 
-            # -----------------------------
+             
             # Ignore irrelevant messages
-            # -----------------------------
+             
 
             if (
                 not name_matches
@@ -97,9 +97,9 @@ class TelegramMonitor:
             ):
                 return
 
-            # -----------------------------
+             
             # Duplicate protection
-            # -----------------------------
+             
 
             if self.repository.message_exists(
                 GROUP_ID,
@@ -111,9 +111,9 @@ class TelegramMonitor:
                 )
                 return
 
-            # -----------------------------
+             
             # Save relevant message
-            # -----------------------------
+             
 
             telegram_message = {
                 "telegram_message_id": message.id,
@@ -129,9 +129,9 @@ class TelegramMonitor:
                 telegram_message
             )
 
-            # -----------------------------
+             
             # Debug output
-            # -----------------------------
+             
 
             print("\n===== RELEVANT TELEGRAM MESSAGE =====")
 
@@ -163,21 +163,21 @@ class TelegramMonitor:
             if company_matches:
 
                 self.notifier.send(
-                    "🏢 Company Announcement",
+                    "🔵 Telegram — Company Announcement",
                     f"{', '.join(company_matches)}\n\n{text}"
                 )
 
             if name_matches:
 
                 self.notifier.send(
-                    "🔴 Your Name Mentioned",
+                    "🔴 Telegram — Your Name Mentioned",
                     text
                 )
 
             if shortlist_matches:
 
                 self.notifier.send(
-                    "🟡 Shortlist Released",
+                    "🟡 Telegram — Shortlist Released",
                     text
                 )
 
