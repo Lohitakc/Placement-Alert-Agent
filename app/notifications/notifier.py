@@ -1,13 +1,14 @@
-from plyer import notification
+from winotify import Notification
 
 
 class Notifier:
 
     def send(self, title: str, message: str):
 
-        notification.notify(
+        toast = Notification(
+            app_id="Placement Agent",
             title=title,
-            message=message,
-            app_name="Placement Agent",
-            timeout=60,
+            msg=message
         )
+
+        toast.show()
